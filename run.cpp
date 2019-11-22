@@ -1,21 +1,25 @@
 // OpenGL Utility Toolkit
 #include <GL/glut.h>
+#include <fstream>
+#include <iostream>
+#include <stdlib.h>
+#include <load_bmp.h>
+using namespace std;
 
-// Apenas requerido pelas aplica��es em windows
-//#include <windows.h>
-
-// Inicializa��es de OpenGL que devem ser
-// executadas antes da exibi��o do desenho
+// Inicializacoes de OpenGL que devem ser
+// executadas antes da exibicao do desenho
 void Inicializa(){
 
   // Define a janela de visualiza��o
-  glMatrixMode(GL_PROJECTION);
+  glMatrixMode(GLUT_SINGLE | GLUT_RGB);
 
   // Define o sistema de coordenadas
-  glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+  glOrtho(-100.0, 100.0, -100.0, 100.0, -100.0, 100.0);
 
-  // Define a cor de fundo da janela como azul
-  glClearColor(0.0, 0.0, 1.0, 1.0);
+  // Define a cor de fundo da janela
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+
+  glLoadIdentity();
 }
 
 // Fun��o callback chamada para fazer o desenho
