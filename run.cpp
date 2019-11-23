@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include <vector>
 
 using namespace std;
@@ -43,7 +44,7 @@ BITMAPFULLHEADER header;
 // image data
 unsigned char *data;        // loaded image
 vector< vector<double> > imagem;
-
+vector< vector<double> > imagem2;
 
 int fp_pixel = 3;
 int fp_cor = 8;
@@ -112,86 +113,30 @@ void constroiJanela(int x, int y) {
     }
   }
 
-  vector<double> pixel;
-  pixel.push_back(x);
-  pixel.push_back(y);
-  pixel.push_back(imagem[x][y]);
-  janela[x][y] = pixel;
-
-  pixel.clear();
-  if(x-1 >= 0) {
-    pixel.push_back(x-1);
-    pixel.push_back(y);
-    pixel.push_back(imagem[x-1][y]);
-    janela[x-1][y] = pixel;
-
-    if(y-1 >= 0) {
-      pixel.clear();
-      pixel.push_back(x-1);
-      pixel.push_back(y-1);
-      pixel.push_back(imagem[x-1][y-1]);
-      janela[x-1][y-1] = pixel;
+  int count_x = 0, count_y = 0;
+  for(int i = x - 4; i <= x + 4; i++){
+    for(int j = y - 4; j <= y + 4; j++){
+      vector<double> pixel;
+      pixel.push_back(i);
+      pixel.push_back(j);
+      pixel.push_back(imagem2[i][j]);
+      janela[count_x][count_y] = pixel;
+      count_y++;
     }
-
-    if(y+1 >= imagem[0].size()-1) {
-      pixel.clear();
-      pixel.push_back(x-1);
-      pixel.push_back(y+1);
-      pixel.push_back(imagem[x-1][y+1]);
-      janela[x-1][y+1] = pixel;
-    }
+    count_x++;
   }
 
-  if(x+1 <= imagem.size()-1) {
-    pixel.push_back(x+1);
-    pixel.push_back(y);
-    pixel.push_back(imagem[x+1][y]);
-    janela[x+1][y] = pixel;
-
-    if(y-1 >= 0) {
-      pixel.clear();
-      pixel.push_back(x+1);
-      pixel.push_back(y-1);
-      pixel.push_back(imagem[x+1][y-1]);
-      janela[x+1][y-1] = pixel;
-    }
-
-    if(y+1 >= imagem[0].size()-1) {
-      pixel.clear();
-      pixel.push_back(x+1);
-      pixel.push_back(y+1);
-      pixel.push_back(imagem[x+1][y+1]);
-      janela[x+1][y+1] = pixel;
-    }
-  }
-
-  if(y-1 >= 0) {
-    pixel.clear();
-    pixel.push_back(x);
-    pixel.push_back(y-1);
-    pixel.push_back(imagem[x][y-1]);
-    janela[x][y-1] = pixel;
-  }
-
-  if(y+1 >= imagem[0].size()-1) {
-    pixel.clear();
-    pixel.push_back(x);
-    pixel.push_back(y+1);
-    pixel.push_back(imagem[x][y+1]);
-    janela[x][y+1] = pixel;
-  }
 }
 
 double BF() {
-  for(int i=0; i<imagem.size(); i++){
-    for(int j=0; j<imagem[0].size(); j++){
+  for(int i=4; i<imagem2.size() - 4; i++){
+    for(int j=4; j<imagem2[0].size() - 4; j++){
       constroiJanela(i, j);
-
-      double wp = fatorNormalizacao(i, j, imagem[i][j]);
-      double wp_2 = fatorNormalizacaoComIq(i, j, imagem[i][j]);
+      double wp = fatorNormalizacao(i, j, imagem2[i][j]);
+      double wp_2 = fatorNormalizacaoComIq(i, j, imagem2[i][j]);
       double bf = (1/wp)*wp_2;
 
-      return bf;
+      imagem[i - 4][j - 4] = bf;
     }
   }
 }
@@ -269,6 +214,20 @@ void display(void) {
   glRasterPos2i(0, 0);
   glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
   glRasterPos2i(width, 0);
+  BF();
+  imagem2.clear();
+  unsigned char data2[height*width*3];     
+  for (int i = 0; i<width; i++){
+    for (int j = 0; j<height; j++){
+      data2[i*width*3 + j*3] = imagem[i][j];
+      data2[i*width*3 + j*3 + 1] = imagem[i][j];
+      data2[i*width*3 + j*3 + 2] = imagem[i][j];
+      //cout<<"OI"<<endl;
+    }
+  }
+
+  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data2);
+  glRasterPos2i(width*2, 0);
   glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
   glFlush();
 }
@@ -339,17 +298,27 @@ int main(int argc, char **argv) {
   loadBMP(argv[1]);
   long width = header.bmpinfo.width;
   long height = header.bmpinfo.height;
+  long width2 = header.bmpinfo.width + 8;
+  long height2 = header.bmpinfo.height + 8;
   //double imagem[width][height];
+
+  imagem2.resize(width2);
+  for (int i = 0; i<width2; i++){
+    for (int j = 0; j<height2; j++){
+      imagem2[i].push_back(-1);
+    }
+  }
+
   imagem.resize(width);
   for (int i = 0; i<width*height*3; i+=height*3){
     for (int j = 0; j<3*height; j+=3){
-      //imagem[i/(height*3)][j/3] = data[i+j]/255.0;
+      imagem2[i/(height*3) + 4][j/3 + 4] = data[i+j]/255.0;
       imagem[i/(height*3)].push_back(data[i+j]/255.0);
     }
   }
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-  glutInitWindowSize(width * 2, height);
+  glutInitWindowSize(width * 3, height);
   glutInitWindowPosition(100, 100);
   glutCreateWindow(argv[0]);
   init();
