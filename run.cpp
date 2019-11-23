@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
-#define TAM_JANELA 9;
 
 using namespace std;
 
@@ -48,7 +47,7 @@ vector< vector<double> > imagem;
 
 int fp_pixel = 3;
 int fp_cor = 8;
-vector<double> janela[TAM_JANELA][TAM_JANELA];
+vector<double> janela[9][9];
 
 double distancia(int px, int py, int qx, int qy) {
   double d;
@@ -72,13 +71,13 @@ double funcaoGaussiana(double x, int fp) {
 
 double fatorNormalizacao(int px, int py, double intensidade_p) {
   double wp = 0.0;
-  for(int i=0; i<TAM_JANELA; i++) {
-    for(int j=0; j<TAM_JANELA; j++) {
+  for(int i=0; i<9; i++) {
+    for(int j=0; j<9; j++) {
       vector<double> pixel = janela[i][j];
 
       if(pixel[0] != -1){
         double d = distancia(px, py, pixel[0], pixel[1]);
-        wp_2 += funcaoGaussiana(d, fp_pixel) * funcaoGaussiana(intensidade_p - pixel[2], fp_cor);
+        wp += funcaoGaussiana(d, fp_pixel) * funcaoGaussiana(intensidade_p - pixel[2], fp_cor);
       }
     }
   }
@@ -88,8 +87,8 @@ double fatorNormalizacao(int px, int py, double intensidade_p) {
 
 double fatorNormalizacaoComIq(int px, int py, double intensidade_p) {
   double wp = 0.0;
-  for(int i=0; i<TAM_JANELA; i++) {
-    for(int j=0; j<TAM_JANELA; j++) {
+  for(int i=0; i<9; i++) {
+    for(int j=0; j<9; j++) {
       vector<double> pixel = janela[i][j];
 
       if(pixel[0] != -1) {
@@ -103,82 +102,82 @@ double fatorNormalizacaoComIq(int px, int py, double intensidade_p) {
 }
 
 void constroiJanela(int x, int y) {
-  for(int i=0; i<TAM_JANELA; i++){
-    for(int j=0; j<TAM_JANELA; j++){
+  for(int i=0; i<9; i++){
+    for(int j=0; j<9; j++){
       vector<double> pixel;
-      pixel.append(-1);
-      pixel.append(-1);
-      pixel.append(-1);
+      pixel.push_back(-1);
+      pixel.push_back(-1);
+      pixel.push_back(-1);
       janela[i][j] = pixel;
     }
   }
 
   vector<double> pixel;
-  pixel.append(x);
-  pixel.append(y);
-  pixel.append(imagem[x][y]);
+  pixel.push_back(x);
+  pixel.push_back(y);
+  pixel.push_back(imagem[x][y]);
   janela[x][y] = pixel;
 
   pixel.clear();
   if(x-1 >= 0) {
-    pixel.append(x-1);
-    pixel.append(y);
-    pixel.append(imagem[x-1][y]);
+    pixel.push_back(x-1);
+    pixel.push_back(y);
+    pixel.push_back(imagem[x-1][y]);
     janela[x-1][y] = pixel;
 
     if(y-1 >= 0) {
       pixel.clear();
-      pixel.append(x-1);
-      pixel.append(y-1);
-      pixel.append(imagem[x-1][y-1]);
+      pixel.push_back(x-1);
+      pixel.push_back(y-1);
+      pixel.push_back(imagem[x-1][y-1]);
       janela[x-1][y-1] = pixel;
     }
 
     if(y+1 >= imagem[0].size()-1) {
       pixel.clear();
-      pixel.append(x-1);
-      pixel.append(y+1);
-      pixel.append(imagem[x-1][y+1]);
+      pixel.push_back(x-1);
+      pixel.push_back(y+1);
+      pixel.push_back(imagem[x-1][y+1]);
       janela[x-1][y+1] = pixel;
     }
   }
 
   if(x+1 <= imagem.size()-1) {
-    pixel.append(x+1);
-    pixel.append(y);
-    pixel.append(imagem[x+1][y]);
+    pixel.push_back(x+1);
+    pixel.push_back(y);
+    pixel.push_back(imagem[x+1][y]);
     janela[x+1][y] = pixel;
 
     if(y-1 >= 0) {
       pixel.clear();
-      pixel.append(x+1);
-      pixel.append(y-1);
-      pixel.append(imagem[x+1][y-1]);
+      pixel.push_back(x+1);
+      pixel.push_back(y-1);
+      pixel.push_back(imagem[x+1][y-1]);
       janela[x+1][y-1] = pixel;
     }
 
     if(y+1 >= imagem[0].size()-1) {
       pixel.clear();
-      pixel.append(x+1);
-      pixel.append(y+1);
-      pixel.append(imagem[x+1][y+1]);
+      pixel.push_back(x+1);
+      pixel.push_back(y+1);
+      pixel.push_back(imagem[x+1][y+1]);
       janela[x+1][y+1] = pixel;
     }
   }
 
   if(y-1 >= 0) {
     pixel.clear();
-    pixel.append(x);
-    pixel.append(y-1);
-    pixel.append(imagem[x][y-1]);
+    pixel.push_back(x);
+    pixel.push_back(y-1);
+    pixel.push_back(imagem[x][y-1]);
     janela[x][y-1] = pixel;
   }
 
   if(y+1 >= imagem[0].size()-1) {
     pixel.clear();
-    pixel.append(x);
-    pixel.append(y+1);
-    pixel.append(imagem[x][y+1]);
+    pixel.push_back(x);
+    pixel.push_back(y+1);
+    pixel.push_back(imagem[x][y+1]);
     janela[x][y+1] = pixel;
   }
 }
