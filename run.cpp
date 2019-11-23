@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 
 // bitmap header structure, has to be packed to avoid compiler padding
 #pragma pack(1)
@@ -39,6 +40,7 @@ BITMAPFULLHEADER header;
 
 // image data
 unsigned char *data;        // loaded image
+vector< vector<double> > imagem;
 
 // dynamic programming to improve performance
 
@@ -136,6 +138,14 @@ int main(int argc, char **argv) {
   loadBMP(argv[1]);
   long width = header.bmpinfo.width;
   long height = header.bmpinfo.height;
+  //double imagem[width][height];
+  imagem.resize(width)
+  for (int i = 0; i<width*height*3; i+=height*3){
+    for (int j = 0; j<3*height; j+=3){
+      //imagem[i/(height*3)][j/3] = data[i+j]/255.0;
+      imagem[i/(height*3)].push_back(data[i+j]/255.0);
+    }
+  }
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowSize(width * 2, height);

@@ -68,7 +68,7 @@ unsigned char * loadBMP(const char *imagepath, unsigned int& width, unsigned int
   }
 
   // Allocate buffer
-	unsigned char *data = (unsigned char *)malloc(imageSize);
+  unsigned char *data = (unsigned char *)malloc(imageSize);
 
   // Read the actual data from the file into the buffer
   fseek(file, dataPos, SEEK_SET);
@@ -89,5 +89,5 @@ unsigned char * loadBMP(const char *imagepath, unsigned int& width, unsigned int
 
   fclose(file);
 
-	return data;
+  return data;
 }
