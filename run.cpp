@@ -254,6 +254,13 @@ void display(void) {
   long width = header.bmpinfo.width;
   long height = header.bmpinfo.height;
 
+  for (int i = 0; i<width*height*3; i+=height*3){
+    for (int j = 0; j<3*height; j+=3){
+      imagem2[i/(height*3) + 4][j/3 + 4] = data[i+j];
+      imagem[i/(height*3)][j/3] = data[i+j];
+    }
+  }
+
   glClear(GL_COLOR_BUFFER_BIT);
   glRasterPos2i(0, 0);
   glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -315,14 +322,11 @@ int main(int argc, char **argv) {
       imagem2[i].push_back(-1);
     }
   }
-
   imagem.resize(width);
-  for (int i = 0; i<width*height*3; i+=height*3){
-    for (int j = 0; j<3*height; j+=3){
-      imagem2[i/(height*3) + 4][j/3 + 4] = data[i+j];
-      imagem[i/(height*3)].push_back(data[i+j]);
-    }
+  for (int i = 0; i<width; i++){
+    imagem[i].resize(height);
   }
+
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowSize(width * 3, height);
