@@ -43,8 +43,8 @@ BITMAPFULLHEADER header;
 
 // image data
 unsigned char *data;        // loaded image
-vector< vector<double> > imagem;
-vector< vector<double> > imagem2;
+vector< vector<int> > imagem;
+vector< vector<int> > imagem2;
 
 int fp_pixel = 3;
 int fp_cor = 8;
@@ -202,18 +202,16 @@ int loadBMP(const char *imagepath) {
 }
 
 void equalizacao(){
-    double niveis[256];
     double prob[256];
     int n_k[256];
     double s[256];
     for (int i = 0; i<256; i++){
-        niveis[i] = i/255.0;
         n_k[i] = 0;
         s[i] = 0;
     }
     for (int i = 0; i<imagem.size(); i++){
         for (int j = 0; j<imagem[i].size(); j++){
-            n_k[imagem[i][j]*255]++;
+            n_k[imagem[i][j]]++;
         }
     }
     for (int i = 0; i<256; i++){
@@ -221,19 +219,18 @@ void equalizacao(){
         for (int j = 0; j<=i; j++){
             s[i] += prob[j];
         }
-        double mais_prox = 0;
+        int mais_prox = 0;
         double menor_dif = 2;
         for (int j = 0; j<256; j++){
-            double nivel = j/255.0;
-            double dif_atual = fabs(nivel-s[i]);
+            double dif_atual = fabs(j-s[i]);
             if (dif_atual < menor_dif){
                 menor_dif = dif_atual;
-                mais_prox = nivel;
+                mais_prox = j;
             }
         }
         for (int l = 0; l<imagem.size(); l++){
             for (int c = 0; c<imagem[i].size(); c++){
-                if (imagem[l][c] == i/255.0){
+                if (imagem[l][c] == i){
                     imagem[l][c] = mais_prox;
                 }
             }
@@ -267,9 +264,9 @@ void display(void) {
   unsigned char data2[height*width*3];
   for (int i = 0; i<width; i++){
     for (int j = 0; j<height; j++){
-      data2[i*height*3 + j*3] = imagem[i][j]*255;
-      data2[i*height*3 + j*3 + 1] = imagem[i][j]*255;
-      data2[i*height*3 + j*3 + 2] = imagem[i][j]*255;
+      data2[i*height*3 + j*3] = imagem[i][j];
+      data2[i*height*3 + j*3 + 1] = imagem[i][j];
+      data2[i*height*3 + j*3 + 2] = imagem[i][j];
     }
   }
   glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data2);
@@ -279,9 +276,9 @@ void display(void) {
   unsigned char data3[height*width*3];
   for (int i = 0; i<width; i++){
     for (int j = 0; j<height; j++){
-      data3[i*height*3 + j*3] = imagem[i][j]*255;
-      data3[i*height*3 + j*3 + 1] = imagem[i][j]*255;
-      data3[i*height*3 + j*3 + 2] = imagem[i][j]*255;
+      data3[i*height*3 + j*3] = imagem[i][j];
+      data3[i*height*3 + j*3 + 1] = imagem[i][j];
+      data3[i*height*3 + j*3 + 2] = imagem[i][j];
     }
   }
   glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data3);
@@ -322,8 +319,8 @@ int main(int argc, char **argv) {
   imagem.resize(width);
   for (int i = 0; i<width*height*3; i+=height*3){
     for (int j = 0; j<3*height; j+=3){
-      imagem2[i/(height*3) + 4][j/3 + 4] = data[i+j]/255.0;
-      imagem[i/(height*3)].push_back(data[i+j]/255.0);
+      imagem2[i/(height*3) + 4][j/3 + 4] = data[i+j];
+      imagem[i/(height*3)].push_back(data[i+j]);
     }
   }
   glutInit(&argc, argv);
