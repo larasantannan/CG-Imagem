@@ -201,52 +201,6 @@ int loadBMP(const char *imagepath) {
   return 0;
 }
 
-
-void init(void) { 
-  glClearColor(0.0, 0.0, 0.0, 0.0); 
-}
-
-void display(void) {
-  long width = header.bmpinfo.width;
-  long height = header.bmpinfo.height;
-
-  glClear(GL_COLOR_BUFFER_BIT);
-  glRasterPos2i(0, 0);
-  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-  glRasterPos2i(width, 0);
-  BF();
-  imagem2.clear();
-  unsigned char data2[height*width*3];     
-  for (int i = 0; i<width; i++){
-    for (int j = 0; j<height; j++){
-      data2[i*width*3 + j*3] = imagem[i][j];
-      data2[i*width*3 + j*3 + 1] = imagem[i][j];
-      data2[i*width*3 + j*3 + 2] = imagem[i][j];
-      //cout<<"OI"<<endl;
-    }
-  }
-
-  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data2);
-  glRasterPos2i(width*2, 0);
-  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-  glFlush();
-}
-
-void reshape(int w, int h) {
-  glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0, w, 0, h, -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-}
-
-void keyboard(unsigned char key, int x, int y) {
-  switch (key) {
-  case 27:
-    exit(0);
-  }
-}
-
 void equalizacao(){
     double niveis[256];
     double prob[256];
@@ -292,6 +246,52 @@ void equalizacao(){
         }
         cout << endl;
     }*/
+}
+
+
+void init(void) { 
+  glClearColor(0.0, 0.0, 0.0, 0.0); 
+}
+
+void display(void) {
+  long width = header.bmpinfo.width;
+  long height = header.bmpinfo.height;
+
+  glClear(GL_COLOR_BUFFER_BIT);
+  glRasterPos2i(0, 0);
+  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+  glRasterPos2i(width, 0);
+  //BF();
+  equalizacao();
+  imagem2.clear();
+  unsigned char data2[height*width*3];     
+  for (int i = 0; i<width; i++){
+    for (int j = 0; j<height; j++){
+      data2[i*height*3 + j*3] = imagem[i][j]*255;
+      data2[i*height*3 + j*3 + 1] = imagem[i][j]*255;
+      data2[i*height*3 + j*3 + 2] = imagem[i][j]*255;
+    }
+  }
+
+  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data2);
+  glRasterPos2i(width*2, 0);
+  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+  glFlush();
+}
+
+void reshape(int w, int h) {
+  glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, w, 0, h, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void keyboard(unsigned char key, int x, int y) {
+  switch (key) {
+  case 27:
+    exit(0);
+  }
 }
 
 int main(int argc, char **argv) {
