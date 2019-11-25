@@ -215,14 +215,14 @@ void equalizacao(){
         }
     }
     for (int i = 0; i<256; i++){
-        prob[i] = n_k[i]/255.0;
+        prob[i] = 1.0*n_k[i]/(imagem.size()*imagem[0].size());
         for (int j = 0; j<=i; j++){
             s[i] += prob[j];
         }
         int mais_prox = 0;
         double menor_dif = 2;
         for (int j = 0; j<256; j++){
-            double dif_atual = fabs(j-s[i]);
+            double dif_atual = fabs(j-(s[i]*255));
             if (dif_atual < menor_dif){
                 menor_dif = dif_atual;
                 mais_prox = j;
