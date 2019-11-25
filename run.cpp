@@ -132,8 +132,8 @@ double BF() {
   for(int i=4; i<imagem2.size() - 4; i++){
     for(int j=4; j<imagem2[0].size() - 4; j++){
       constroiJanela(i, j);
-      double wp = fatorNormalizacao(i, j, imagem2[i][j]);
-      double wp_2 = fatorNormalizacaoComIq(i, j, imagem2[i][j]);
+      double wp = fatorNormalizacao(i-4, j-4, imagem2[i][j]);
+      double wp_2 = fatorNormalizacaoComIq(i-4, j-4, imagem2[i][j]);
       double bf = (1/wp)*wp_2;
 
       imagem[i - 4][j - 4] = bf;
@@ -249,8 +249,8 @@ void equalizacao(){
 }
 
 
-void init(void) { 
-  glClearColor(0.0, 0.0, 0.0, 0.0); 
+void init(void) {
+  glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
 void display(void) {
@@ -260,11 +260,11 @@ void display(void) {
   glClear(GL_COLOR_BUFFER_BIT);
   glRasterPos2i(0, 0);
   glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+
   glRasterPos2i(width, 0);
-  //BF();
-  equalizacao();
+  BF();
   imagem2.clear();
-  unsigned char data2[height*width*3];     
+  unsigned char data2[height*width*3];
   for (int i = 0; i<width; i++){
     for (int j = 0; j<height; j++){
       data2[i*height*3 + j*3] = imagem[i][j]*255;
@@ -272,10 +272,19 @@ void display(void) {
       data2[i*height*3 + j*3 + 2] = imagem[i][j]*255;
     }
   }
-
   glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data2);
+
   glRasterPos2i(width*2, 0);
-  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+  equalizacao();
+  for (int i = 0; i<width; i++){
+    for (int j = 0; j<height; j++){
+      data2[i*height*3 + j*3] = imagem[i][j]*255;
+      data2[i*height*3 + j*3 + 1] = imagem[i][j]*255;
+      data2[i*height*3 + j*3 + 2] = imagem[i][j]*255;
+    }
+  }
+  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data2);
+
   glFlush();
 }
 
