@@ -213,7 +213,7 @@ void equalizacao(){
     }
     for (int i = 0; i<imagem.size(); i++){
         for (int j = 0; j<imagem[i].size(); j++){
-            n_k[(int)imagem[i][j]*255]++;
+            n_k[imagem[i][j]*255]++;
         }
     }
     for (int i = 0; i<256; i++){
@@ -276,14 +276,15 @@ void display(void) {
 
   glRasterPos2i(width*2, 0);
   equalizacao();
+  unsigned char data3[height*width*3];
   for (int i = 0; i<width; i++){
     for (int j = 0; j<height; j++){
-      data2[i*height*3 + j*3] = imagem[i][j]*255;
-      data2[i*height*3 + j*3 + 1] = imagem[i][j]*255;
-      data2[i*height*3 + j*3 + 2] = imagem[i][j]*255;
+      data3[i*height*3 + j*3] = imagem[i][j]*255;
+      data3[i*height*3 + j*3 + 1] = imagem[i][j]*255;
+      data3[i*height*3 + j*3 + 2] = imagem[i][j]*255;
     }
   }
-  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data2);
+  glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data3);
 
   glFlush();
 }
