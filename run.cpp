@@ -326,12 +326,43 @@ int main(int argc, char **argv) {
   for (int i = 0; i<width; i++){
     imagem[i].resize(height);
   }
+  
+  unsigned char bmpfileheader[14] = {'B','M',0,0,0,0,0,0,0,0,54,0,0,0};
+  unsigned char bmpinfoheader[40] = {40,0,0,0,0,0,0,0,0,0,0,0,1,0,24,0};
+  int filesize = 54 + 3*width*height;
+  bmpfileheader[2] = (unsigned char)(filesize);
+  bmpfileheader[3] = (unsigned char)(filesize >> 8);
+  bmpfileheader[4] = (unsigned char)(filesize >> 16);
+  bmpfileheader[5] = (unsigned char)(filesize >> 24);
+
+  bmpinfoheader[4] = (unsigned char)(width);
+  bmpinfoheader[5] = (unsigned char)(width >> 8);
+  bmpinfoheader[6] = (unsigned char)(width >> 16);
+  bmpinfoheader[7] = (unsigned char)(width >> 24);
+  bmpinfoheader[8] = (unsigned char)(height);
+  bmpinfoheader[9] = (unsigned char)(height >> 8);
+  bmpinfoheader[10] = (unsigned char)(height >> 16);
+  bmpinfoheader[11] = (unsigned char)(height >> 24);  
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowSize(width * 3, height);
   glutInitWindowPosition(100, 100);
   glutCreateWindow(argv[0]);
+  
+  FILE *file_1 = fopen("saida_bilateral.bmp", "wb");
+  FILE *file_2 = fopen("saida_bilateral_e_equalizada.bmp", "wb");
+  if (!file_1 or ! file_2) {
+      printf("cannot open file\n");
+  }
+  int tam = width*height*3;
+  fwrite(bmpfileheader,1,14,file_1);
+  fwrite(bmpinfoheader,1,40,file_1);
+  fwrite(bmpfileheader,1,14,file_2);
+  fwrite(bmpinfoheader,1,40,file_2);
+  fwrite(bf,sizeof(unsigned char),tam,file_1);
+  fwrite(final,sizeof(unsigned char),tam,file_2);
+  
   init();
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);
