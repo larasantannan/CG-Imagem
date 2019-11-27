@@ -8,11 +8,6 @@
 
 using namespace std;
 
-long width = header.bmpinfo.width;
-long height = header.bmpinfo.height;
-unsigned char data2[height*width*3];
-unsigned char data3[height*width*3];
-
 // bitmap header structure, has to be packed to avoid compiler padding
 #pragma pack(1)
 typedef struct BITMAPFILEHEADER {
@@ -50,6 +45,10 @@ BITMAPFULLHEADER header;
 unsigned char *data;        // loaded image
 vector< vector<int> > imagem;
 vector< vector<int> > imagem2;
+long width = header.bmpinfo.width;
+long height = header.bmpinfo.height;
+unsigned char data2[height*width*3];
+unsigned char data3[height*width*3];
 
 
 int fp_pixel = 3;
