@@ -45,11 +45,9 @@ BITMAPFULLHEADER header;
 unsigned char *data;        // loaded image
 vector< vector<int> > imagem;
 vector< vector<int> > imagem2;
-long width = header.bmpinfo.width;
-long height = header.bmpinfo.height;
-unsigned char data2[height*width*3];
-unsigned char data3[height*width*3];
 
+unsigned char data2[];
+unsigned char data3[];
 
 int fp_pixel = 3;
 int fp_cor = 8;
@@ -320,6 +318,9 @@ int main(int argc, char **argv) {
   long width2 = header.bmpinfo.width + 8;
   long height2 = header.bmpinfo.height + 8;
   //double imagem[width][height];
+  
+  data2 = (unsigned char *)malloc(height*width*3);
+  data3 = (unsigned char *)malloc(height*width*3);
 
   imagem2.resize(width2);
   for (int i = 0; i<width2; i++){
