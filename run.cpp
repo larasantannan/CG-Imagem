@@ -8,6 +8,11 @@
 
 using namespace std;
 
+long width = header.bmpinfo.width;
+long height = header.bmpinfo.height;
+unsigned char data2[height*width*3];
+unsigned char data3[height*width*3];
+
 // bitmap header structure, has to be packed to avoid compiler padding
 #pragma pack(1)
 typedef struct BITMAPFILEHEADER {
@@ -45,6 +50,7 @@ BITMAPFULLHEADER header;
 unsigned char *data;        // loaded image
 vector< vector<int> > imagem;
 vector< vector<int> > imagem2;
+
 
 int fp_pixel = 3;
 int fp_cor = 8;
@@ -360,8 +366,8 @@ int main(int argc, char **argv) {
   fwrite(bmpinfoheader,1,40,file_1);
   fwrite(bmpfileheader,1,14,file_2);
   fwrite(bmpinfoheader,1,40,file_2);
-  fwrite(bf,sizeof(unsigned char),tam,file_1);
-  fwrite(final,sizeof(unsigned char),tam,file_2);
+  fwrite(data2,sizeof(unsigned char),tam,file_1);
+  fwrite(data3,sizeof(unsigned char),tam,file_2);
   
   init();
   glutReshapeFunc(reshape);
