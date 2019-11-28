@@ -46,8 +46,8 @@ unsigned char *data;        // loaded image
 vector< vector<int> > imagem;
 vector< vector<int> > imagem2;
 
-unsigned char data2[];
-unsigned char data3[];
+unsigned char *data2;
+unsigned char *data3;
 
 int fp_pixel = 3;
 int fp_cor = 8;
@@ -355,6 +355,10 @@ int main(int argc, char **argv) {
   glutInitWindowSize(width * 3, height);
   glutInitWindowPosition(100, 100);
   glutCreateWindow(argv[0]);
+  init();
+  glutReshapeFunc(reshape);
+  glutKeyboardFunc(keyboard);
+  glutDisplayFunc(display);
   
   FILE *file_1 = fopen("saida_bilateral.bmp", "wb");
   FILE *file_2 = fopen("saida_bilateral_e_equalizada.bmp", "wb");
@@ -369,10 +373,7 @@ int main(int argc, char **argv) {
   fwrite(data2,sizeof(unsigned char),tam,file_1);
   fwrite(data3,sizeof(unsigned char),tam,file_2);
   
-  init();
-  glutReshapeFunc(reshape);
-  glutKeyboardFunc(keyboard);
-  glutDisplayFunc(display);
+
   glutMainLoop();
   return 0;
 }
